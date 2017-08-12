@@ -35,7 +35,22 @@ class NelloLocation(object):
         '''
         Address of this location
         '''
-        return self._json.get('address')
+        addr = self._json.get('address')
+        if not addr:
+            return
+        country = addr.get('country')
+        state = addr.get('state')
+        city = addr.get('city')
+        zip_code = addr.get('zip')
+        street = addr.get('street')
+        number = addr.get('number')
+        german = country.lower() in ['deutschland', 'germany']
+        return '{} {} {} {}{}, {}'.format(
+            street if german else number,
+            number if german else street,
+            zip_code, city,
+            '{}, '.format(state) if state != 'state' else '',
+            country)
 
     @property
     def activity(self):
