@@ -42,8 +42,7 @@ class NelloLocation(object):
         '''
         Recent activity on this lock
         '''
-        res = self._nello.get_activity(self.location_id)
-        return res.get('activities')
+        return self._nello.get_activity(self.location_id)
 
     def open_door(self):
         '''
@@ -126,18 +125,23 @@ class Nello(object):
         '''
         return self._request(method='GET', path='locations/')
 
-    def get_activity(self, location_id):
+    def get_activity(self, location_id=None):
         '''
         Get the activity log for a location
         '''
+        if not location_id:
+            location_id = self.main_location.location_id
         path = 'locations/{}/activity'.format(location_id)
-        return self._request(method='GET', path=path)
+        resp = self._request(method='GET', path=path)
+        return resp.get('activities')
 
-    def open_door(self, location_id):
+    def open_door(self, location_id=None):
         '''
         Ring the buzzer AKA open the door
         :param location: Target location ID
         '''
+        if not location_id:
+            location_id = self.main_location.location_id
         path = 'locations/{}/users/{}/open'.format(location_id, self.user_id)
         resp = self._request(
             method='POST',
