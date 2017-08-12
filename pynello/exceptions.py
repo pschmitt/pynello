@@ -1,3 +1,6 @@
+'''
+Nello Exceptions
+'''
 
 
 class NelloException(Exception):
@@ -10,5 +13,12 @@ class NelloException(Exception):
 class NelloLoginException(NelloException):
     '''
     Exception to be raised when the login fails
+    '''
+    pass
+
+
+class NelloTokenTimeoutException(NelloException):
+    '''
+    Exception to be raised when the auth ticket expires
     '''
     pass

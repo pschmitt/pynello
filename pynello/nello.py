@@ -8,7 +8,7 @@ Credit: https://forum.fhem.de/index.php/topic,75127.msg668871.html
 
 import logging
 import requests
-from .exceptions import NelloLoginException
+from .exceptions import (NelloLoginException, NelloTokenTimeoutException)
 from .utils import (
     check_success, extract_error_message, extract_status_code, hash_password)
 
@@ -84,11 +84,14 @@ class Nello(object):
 
     def _request(self, method, path, json=None):
         '''
-        Issue an API call
+        Issue an API call.
+        NOTE: This method does not try to log in again in case the
+        authentication has expired. Use _retry_request() for this.
         :param method: HTTP method to use (GET or POST)
         :param path: URL path to the API object to call
         :param json: Optional JSON data
         '''
+        LOGGER.info('Method: %s, path: %s, json: %s', method, path, json)
         url = 'https://api.nello.io/{}'.format(path)
         LOGGER.debug('%s call to %s', method, url)
         LOGGER.debug('JSON Data: %s', json)
@@ -98,7 +101,25 @@ class Nello(object):
         LOGGER.debug('JSON response: %s', json_response)
         if not check_success(json_response):
             status = extract_status_code(json_response)
+            err_msg = extract_error_message(json_response)
             LOGGER.warning('JSON status: %s', status)
+            LOGGER.warning('API Error message: %s', err_msg)
+            if status == '400':
+                raise NelloTokenTimeoutException(err_msg)
+        return json_response
+
+    def _retry_request(self, *args, **kwargs):
+        '''
+        Issue an API call that may required to log in again.
+        :param method: HTTP method to use (GET or POST)
+        :param path: URL path to the API object to call
+        :param json: Optional JSON data
+        '''
+        try:
+            json_response = self._request(*args, **kwargs)
+        except NelloTokenTimeoutException:
+            if self.login():
+                json_response = self._request(*args, **kwargs)
         return json_response
 
     def login(self):
@@ -123,7 +144,7 @@ class Nello(object):
         '''
         Get all available locations
         '''
-        return self._request(method='GET', path='locations/')
+        return self._retry_request(method='GET', path='locations/')
 
     def get_activity(self, location_id=None):
         '''
@@ -132,7 +153,7 @@ class Nello(object):
         if not location_id:
             location_id = self.main_location.location_id
         path = 'locations/{}/activity'.format(location_id)
-        resp = self._request(method='GET', path=path)
+        resp = self._retry_request(method='GET', path=path)
         return resp.get('activities')
 
     def open_door(self, location_id=None):
@@ -143,7 +164,7 @@ class Nello(object):
         if not location_id:
             location_id = self.main_location.location_id
         path = 'locations/{}/users/{}/open'.format(location_id, self.user_id)
-        resp = self._request(
+        resp = self._retry_request(
             method='POST',
             path=path,
             json={'type': 'swipe'}
