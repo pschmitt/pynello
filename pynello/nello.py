@@ -15,7 +15,7 @@ from .utils import (
 LOGGER = logging.getLogger(__name__)
 
 
-class NelloLock(object):
+class NelloLocation(object):
     '''
     Class representation of a Nello Lock
     '''
@@ -71,7 +71,7 @@ class Nello(object):
         location_data = self.get_locations()
         locs = []
         for loc in location_data.get('geofences'):
-            locs.append(NelloLock(self, loc))
+            locs.append(NelloLocation(self, loc))
         return locs
 
     @property

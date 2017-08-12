@@ -1,1 +1,1 @@
-from .nello import (Nello, NelloLock)
+from .nello import (Nello, NelloLocation)
