@@ -10,7 +10,7 @@ setup(
     name='pynello',
     version='1.0',
     license='GPL3',
-    description='Python library for nello.io locks',
+    description='Python library for nello.io intercoms',
     long_description=read('README.rst'),
     author='Philipp Schmitt',
     author_email='philipp@schmitt.co',
