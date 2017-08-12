@@ -31,6 +31,13 @@ class NelloLocation(object):
         return self._json.get('location_id')
 
     @property
+    def short_id(self):
+        '''
+        Location ID
+        '''
+        return self._json.get('short_loc_id')
+
+    @property
     def address(self):
         '''
         Address of this location
