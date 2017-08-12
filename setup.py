@@ -17,4 +17,5 @@ setup(
     url='https://github.com/pschmitt/pynello',
     packages=find_packages(),
     install_requires=['requests'],
+    entry_points={'console_scripts': ['nello=pynello.__main__:main']}
 )
