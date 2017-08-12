@@ -14,3 +14,5 @@ Code sample
   n.locations
   # Open the door ("main" ie. first available location)
   n.main_location.open_door()
+  # Get the recent activity
+  n.main_location.activity
