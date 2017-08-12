@@ -6,73 +6,13 @@ Nello Lock Library
 Credit: https://forum.fhem.de/index.php/topic,75127.msg668871.html
 '''
 
-import binascii
-import hashlib
 import logging
-
 import requests
+from .exceptions import NelloLoginException
+from .utils import (
+    check_success, extract_error_message, extract_status_code, hash_password)
 
 LOGGER = logging.getLogger(__name__)
-
-
-def _hash_password(username, password):
-    '''
-    Hash the password
-    '''
-    LOGGER.debug('username: %s - type: %s', username, type(username))
-    LOGGER.debug('password: %s - type: %s', password, type(password))
-    __salt_str = str(username) + str(password)
-    salt = hashlib.sha256(__salt_str.encode()).digest()
-    pwd_hash = hashlib.pbkdf2_hmac(
-        'sha1', password.encode(), salt, iterations=4000, dklen=32)
-    # Use this to use the str value instead of bytes
-    # salt = hashlib.sha256(__salt_str.encode()).hexdigest()
-    # Uncomment this when using str value of the sha256 of salt
-    # pwd_hash = hashlib.pbkdf2_hmac(
-    #     'sha1', password.encode(), salt.encode(), iterations=4000, dklen=32)
-    pwd_hash_str = binascii.hexlify(pwd_hash).upper()
-    LOGGER.debug('Hash: %s - Salt: %s', pwd_hash_str, salt)
-    return pwd_hash_str.decode('utf-8')
-
-
-def _extract_status_code(json_response):
-    '''
-    Extract the status code string from a JSON response
-    '''
-    return json_response.get('result', {}).get('status')
-
-
-def _extract_error_message(json_response):
-    '''
-    Extract the error message from an API call's JSON response
-    '''
-    return json_response.get('result', {}).get('message')
-
-
-def _check_success(json_response):
-    '''
-    Check whether an API call suceeded
-    :param json_response: JSON response
-    '''
-    # The login call returns a status code of 'OK' when successful
-    # The other methods should return '200'
-    status_codes_ok = ['200', 'OK']
-    status = _extract_status_code(json_response)
-    return status in status_codes_ok
-
-
-class NelloException(Exception):
-    '''
-    Base Exception for Nello related errors
-    '''
-    pass
-
-
-class NelloLoginException(NelloException):
-    '''
-    Exception to be raised when the login fails
-    '''
-    pass
 
 
 class NelloLock(object):
@@ -157,8 +97,8 @@ class Nello(object):
         response.raise_for_status()
         json_response = response.json()
         LOGGER.debug('JSON response: %s', json_response)
-        if not _check_success(json_response):
-            status = _extract_status_code(json_response)
+        if not check_success(json_response):
+            status = extract_status_code(json_response)
             LOGGER.warning('JSON status: %s', status)
         return json_response
 
@@ -166,7 +106,7 @@ class Nello(object):
         '''
         Login to Nello server
         '''
-        pwd_hash = _hash_password(self.username, self.password)
+        pwd_hash = hash_password(self.username, self.password)
         resp = self._request(
             method='POST',
             path='login',
@@ -174,7 +114,7 @@ class Nello(object):
         )
         if not resp.get('authentication'):
             LOGGER.error('Authentication failed: %s', resp)
-            err_msg = _extract_error_message(resp)
+            err_msg = extract_error_message(resp)
             raise NelloLoginException('Login failed: {}'.format(err_msg))
         self.user_id = resp.get('user', {}).get('user_id')
         LOGGER.info('Login successful. User ID: %s', self.user_id)
@@ -204,4 +144,4 @@ class Nello(object):
             path=path,
             json={'type': 'swipe'}
         )
-        return _check_success(resp)
+        return check_success(resp)
