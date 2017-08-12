@@ -7,7 +7,10 @@ CLI script for opening the main location's door
 import argparse
 import logging
 import sys
+from datetime import datetime
 from pprint import pprint
+from dateutil import tz
+from dateutil.parser import parse as dateparse
 from .nello import (LOGGER, Nello, NelloLoginException)
 
 
@@ -25,7 +28,13 @@ def parse_args():
     subparsers = parser.add_subparsers(dest='action', help='Available actions')
     subparsers.required = True
     subparsers.add_parser('open')
-    subparsers.add_parser('activity')
+    activity_parser = subparsers.add_parser('activity')
+    activity_parser.add_argument(
+        '-j', '--raw', action='store_true', default=False,
+        help='Output RAW JSON')
+    activity_parser.add_argument(
+        '-r', '--reverse', action='store_true', default=False,
+        help='Reverse output')
     return parser.parse_args()
 
 
@@ -52,7 +61,22 @@ def main():
                 sys.exit(1)
         elif args.action == 'activity':
             activity = nello.get_activity(target_location_id)
-            pprint(activity)
+            if args.reverse:
+                activity = reversed(activity)
+            if args.raw:
+                pprint(activity)
+            else:
+                for act in activity:
+                    # Retrive raw date
+                    date = dateparse(act.get('date'))
+                    # Convert to local time
+                    utc_date = date.replace(tzinfo=tz.tzutc())
+                    localized_date = utc_date.astimezone(tz.tzlocal())
+                    date_str = datetime.strftime(
+                        localized_date, '%Y-%m-%d %H:%M:%S')
+                    print('[{}] {}'.format(
+                        date_str,
+                        act.get('description')))
     except NelloLoginException as exc:
         print(exc)
         sys.exit(1)
