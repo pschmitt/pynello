@@ -2,7 +2,7 @@
 # coding: utf-8
 
 '''
-Nello Lock Library
+Nello Intercom Library
 Credit: https://forum.fhem.de/index.php/topic,75127.msg668871.html
 '''
 
@@ -53,7 +53,7 @@ class NelloLocation(object):
 
 class Nello(object):
     '''
-    Nello Lock Controller
+    Nello Intercom API client
     '''
     def __init__(self, username, password):
         self.username = username
