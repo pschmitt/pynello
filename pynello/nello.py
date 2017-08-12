@@ -50,6 +50,15 @@ class NelloLocation(object):
         '''
         return self._nello.open_door(self.location_id)
 
+    def update(self):
+        '''
+        Update JSON data
+        '''
+        location_data = self._nello.get_locations()
+        for loc in location_data.get('geofences'):
+            if loc.get('location_id') == self.location_id:
+                self._json = loc
+
 
 class Nello(object):
     '''
