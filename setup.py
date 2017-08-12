@@ -1,4 +1,9 @@
+import os
 from setuptools import find_packages, setup
+
+
+def read(fname):
+    return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 
 setup(
@@ -6,7 +11,7 @@ setup(
     version='1.0',
     license='GPL3',
     description='Python library for nello.io locks',
-    long_description=open('README.rst').read(),
+    long_description=read('README.rst'),
     author='Philipp Schmitt',
     author_email='philipp@schmitt.co',
     url='https://github.com/pschmitt/pynello',
