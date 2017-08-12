@@ -16,6 +16,6 @@ setup(
     author_email='philipp@schmitt.co',
     url='https://github.com/pschmitt/pynello',
     packages=find_packages(),
-    install_requires=['requests'],
+    install_requires=['python-dateutil', 'requests'],
     entry_points={'console_scripts': ['nello=pynello.__main__:main']}
 )
