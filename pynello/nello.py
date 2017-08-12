@@ -84,7 +84,6 @@ class Nello(object):
         self.password = password
         self._session = requests.Session()
         self.user_id = None
-        self.login()
 
     @property
     def locations(self):
@@ -139,6 +138,9 @@ class Nello(object):
         :param path: URL path to the API object to call
         :param json: Optional JSON data
         '''
+        # We never logged in. Let's do this now.
+        if not self.user_id:
+            self.login()
         try:
             json_response = self._request(*args, **kwargs)
         except NelloTokenTimeoutException:
