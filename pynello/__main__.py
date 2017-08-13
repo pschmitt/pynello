@@ -43,6 +43,7 @@ def parse_args():
     list_parser = subparsers.add_parser('list')
     list_parser.add_argument(
         '-f', '--field', choices=FIELDS, help='Field filter')
+    subparsers.add_parser('info')
     return parser.parse_args()
 
 
@@ -59,7 +60,7 @@ def open_door(nello, target):
     :param target: Target Location ID
     '''
     if nello.open_door(target):
-        print('Open door: SUCCESS!')
+        print('Door opened successfully')
     else:
         print('Failed to open door')
         sys.exit(1)
@@ -131,6 +132,27 @@ def list_locations(nello, location=None, field=None):
         print(output)
 
 
+def display_info(nello):
+    '''
+    Display general info about the current account etc.
+    '''
+    print('User ID: {}\n'
+          'Username: {}\n'
+          'First name: {}\n'
+          'Last name: {}\n'.format(
+              nello.account.user_id,
+              nello.account.username,
+              nello.account.first_name,
+              nello.account.last_name))
+    print('Roles:')
+    for role in nello.account.roles:
+        is_admin = role.get('role') == 'unrestricted'
+        print('- {}: {}{}'.format(
+            role.get('location_id'),
+            'Admin' if is_admin else 'User',
+            ' (Inactive)' if not role.get('is_active', False) else ''))
+
+
 def main():
     '''
     Main CLI function
@@ -150,6 +172,8 @@ def main():
             display_activity(nello, target, args.raw, args.reverse)
         elif args.action == 'list':
             list_locations(nello, location=args.location, field=args.field)
+        elif args.action == 'info':
+            display_info(nello)
     except NelloLoginException as exc:
         print(exc)
         sys.exit(1)

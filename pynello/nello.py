@@ -15,13 +15,69 @@ from .utils import (
 LOGGER = logging.getLogger(__name__)
 
 
-class NelloLocation(object):
+# pylint: disable=too-few-public-methods
+class NelloObject(object):
     '''
-    Class representation of a Nello Lock
+    Base class for Nello Objects.
     '''
+
     def __init__(self, nello, json):
         self._nello = nello
         self._json = json
+
+
+class NelloAccount(NelloObject):
+    '''
+    Nello Account information
+    '''
+
+    @property
+    def user_id(self):
+        '''
+        User ID
+        '''
+        return self._json.get('user_id')
+
+    @property
+    def username(self):
+        '''
+        Username (email)
+        '''
+        return self._json.get('username')
+
+    @property
+    def first_name(self):
+        '''
+        First Name
+        '''
+        return self._json.get('first_name')
+
+    @property
+    def last_name(self):
+        '''
+        Last Name
+        '''
+        return self._json.get('last_name')
+
+    @property
+    def roles(self):
+        '''
+        Roles (permissions)
+        Example:
+        [{'home_ssid': None,
+          'is_active': True,
+          'location_id': 'XXX',
+          'role': 'unrestricted',
+          'stripe_id': 'XXX',
+          'subscription_plan': ''}]
+        '''
+        return self._json.get('roles')
+
+
+class NelloLocation(NelloObject):
+    '''
+    Class representation of a Nello Lock.
+    '''
 
     @property
     def location_id(self):
@@ -90,7 +146,16 @@ class Nello(object):
         self.username = username
         self.password = password
         self._session = requests.Session()
-        self.user_id = None
+        self._account = None
+
+    @property
+    def account(self):
+        '''
+        Account property. Will try to login if required.
+        '''
+        if not self._account:
+            self.login()
+        return self._account
 
     @property
     def locations(self):
@@ -146,7 +211,7 @@ class Nello(object):
         :param json: Optional JSON data
         '''
         # We never logged in. Let's do this now.
-        if not self.user_id:
+        if not self._account:
             self.login()
         try:
             json_response = self._request(*args, **kwargs)
@@ -169,8 +234,8 @@ class Nello(object):
             LOGGER.error('Authentication failed: %s', resp)
             err_msg = extract_error_message(resp)
             raise NelloLoginException('Login failed: {}'.format(err_msg))
-        self.user_id = resp.get('user', {}).get('user_id')
-        LOGGER.info('Login successful. User ID: %s', self.user_id)
+        self._account = NelloAccount(self, resp.get('user'))
+        LOGGER.info('Login successful. User ID: %s', self.account.user_id)
         return True
 
     def get_locations(self):
@@ -196,7 +261,8 @@ class Nello(object):
         '''
         if not location_id:
             location_id = self.main_location.location_id
-        path = 'locations/{}/users/{}/open'.format(location_id, self.user_id)
+        path = 'locations/{}/users/{}/open'.format(
+            location_id, self.account.user_id)
         resp = self._retry_request(
             method='POST',
             path=path,
