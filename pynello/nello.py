@@ -121,7 +121,7 @@ class Nello(object):
         :param path: URL path to the API object to call
         :param json: Optional JSON data
         '''
-        LOGGER.info('Method: %s, path: %s, json: %s', method, path, json)
+        LOGGER.debug('Method: %s, path: %s, json: %s', method, path, json)
         url = 'https://api.nello.io/{}'.format(path)
         LOGGER.debug('%s call to %s', method, url)
         LOGGER.debug('JSON Data: %s', json)
