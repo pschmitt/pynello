@@ -64,7 +64,7 @@ def main():
             if args.reverse:
                 activity = reversed(activity)
             if args.raw:
-                pprint(activity)
+                pprint(list(activity))
             else:
                 for act in activity:
                     # Retrive raw date
