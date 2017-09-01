@@ -9,8 +9,7 @@ Credit: https://forum.fhem.de/index.php/topic,75127.msg668871.html
 import logging
 import requests
 from .exceptions import (NelloLoginException, NelloTokenTimeoutException)
-from .utils import (
-    check_success, extract_error_message, extract_status_code, hash_password)
+from .utils import (check_success, extract_error_message, extract_status_code)
 
 LOGGER = logging.getLogger(__name__)
 
@@ -224,11 +223,10 @@ class Nello(object):
         '''
         Login to Nello server
         '''
-        pwd_hash = hash_password(self.username, self.password)
         resp = self._request(
             method='POST',
             path='login',
-            json={'username': self.username, 'password': pwd_hash}
+            json={'username': self.username, 'password': self.password}
         )
         if not resp.get('authentication'):
             LOGGER.error('Authentication failed: %s', resp)
