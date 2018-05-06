@@ -8,7 +8,7 @@ def read(fname):
 
 setup(
     name='pynello',
-    version='2.0.1',
+    version='2.0.2',
     license='GPL3',
     description='Python library for nello.io intercoms',
     long_description=read('README.md'),
