@@ -35,7 +35,7 @@ n.set_webook(loc_id, 'https://example.com/nello/event')
 
 **This API is deprecated**
 
-A huge thanks to Oskar Neumann for his `original work <https://forum.fhem.de/index.php/topic,75127.msg668871.html>`_ on the `FHEM <https://fhem.de>`_ integration.
+A huge thanks to Oskar Neumann for his [original work](https://forum.fhem.de/index.php/topic,75127.msg668871.html) on the [FHEM integration](https://fhem.de>).
 
 ### Code sample
 
