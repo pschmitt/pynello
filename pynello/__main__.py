@@ -11,7 +11,7 @@ from datetime import datetime
 from pprint import pprint
 from dateutil import tz
 from dateutil.parser import parse as dateparse
-from .nello import (LOGGER, Nello, NelloLoginException)
+from .private.nello import (LOGGER, Nello, NelloLoginException)
 
 FIELD_LOCATION_ID = ['id', 'location_id']
 FIELD_SHORT_ID = ['sid', 'short', 'short_loc_id', 'short_location_id']
