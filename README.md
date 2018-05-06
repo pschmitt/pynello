@@ -16,6 +16,7 @@ n = Nello(client_id='you-need-to-ask-nello-for-this', username='me@example.com',
 
 # Get available locations
 n.locations
+
 # Open the door ("main" ie. first available location)
 n.main_location.open_door()
 
