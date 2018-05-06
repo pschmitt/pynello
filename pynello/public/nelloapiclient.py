@@ -43,6 +43,9 @@ class NelloApiClient(object):
     def __request(self, method, url, json=None):
         '''
         Requests wrapper
+        :param method: HTTP method to use (GET or POST)
+        :param path: URL path to the API object to call
+        :param json: Optional JSON data
         '''
         res = self._session.request(method, url, json=json)
         res.raise_for_status()
@@ -54,6 +57,8 @@ class NelloApiClient(object):
 
     def list_locations(self):
         '''
+        List the available locations/locks
+        Documentation:
         https://nellopublicapi.docs.apiary.io/#reference/0/locations-collection/list-locations
         '''
         url = 'https://public-api.nello.io/v1/locations/'
@@ -61,7 +66,11 @@ class NelloApiClient(object):
 
     def create_time_window(self, location_id, name, ical):
         '''
+        Create a new time window
+        Documentation:
         https://nellopublicapi.docs.apiary.io/#reference/0/locations-collection/create-a-new-time-window
+        :param location_id: ID of the location
+        :param ical: String representation of an ICAL calendar event
         '''
         url = 'https://public-api.nello.io/v1/locations/{}/tw/'.format(
             location_id)
@@ -70,7 +79,11 @@ class NelloApiClient(object):
 
     def delete_time_window(self, location_id, time_window_id):
         '''
+        Delete a time window
+        Documentation:
         https://nellopublicapi.docs.apiary.io/#reference/0/locations-collection/delete-a-time-window
+        :param location_id: ID of the location
+        :param time_window_id: ID of the time window to delete
         '''
         url = 'https://public-api.nello.io/v1/locations/{}/tw/{}/'.format(
             location_id, time_window_id)
@@ -78,7 +91,10 @@ class NelloApiClient(object):
 
     def open_door(self, location_id):
         '''
+        Open the door at a set location
+        Documentation:
         https://nellopublicapi.docs.apiary.io/#reference/0/locations-collection/open-door
+        :param location_id: ID of the location
         '''
         url = 'https://public-api.nello.io/v1/locations/{}/open/'.format(
             location_id)
@@ -86,7 +102,13 @@ class NelloApiClient(object):
 
     def set_webook(self, location_id, webhook_url, actions=None):
         '''
+        Set a webhook URL that is to be called when set actions occur
+        Documentation:
         https://nellopublicapi.docs.apiary.io/#reference/0/locations-collection/add-/-update-webhook
+        :param location_id: ID of the location
+        :param webhook_url: URL to invoke when an action occurs
+        :param actions: List of actions for which the webhook url is to be
+        called
         '''
         all_actions = ['swipe', 'geo', 'tw', 'deny']
         url = 'https://public-api.nello.io/v1/locations/{}/webhook/'.format(
@@ -107,7 +129,10 @@ class NelloApiClient(object):
 
     def delete_webhook(self, location_id):
         '''
+        Delete the current webhook for a location
+        Documentation:
         https://nellopublicapi.docs.apiary.io/#reference/0/locations-collection/delete-webhook
+        :param location_id: ID of the location
         '''
         url = 'https://public-api.nello.io/v1/locations/{}/webhook/'.format(
             location_id)
