@@ -8,10 +8,11 @@ def read(fname):
 
 setup(
     name='pynello',
-    version='2.0.0',
+    version='2.0.1',
     license='GPL3',
     description='Python library for nello.io intercoms',
     long_description=read('README.md'),
+    long_description_content_type='text/markdown',
     author='Philipp Schmitt',
     author_email='philipp@schmitt.co',
     url='https://github.com/pschmitt/pynello',
