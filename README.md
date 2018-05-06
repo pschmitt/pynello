@@ -20,10 +20,7 @@ n.locations
 n.main_location.open_door()
 
 # Setup a webhook for new events
-from pynello.public import NelloApiClient
-n = NelloApiClient(client_id='you-need-to-ask-nello-for-this', username='me@example.com', password='somethingLong')
-loc_id = n.list_locations().get('data')[0].get('location_id')
-n.set_webook(loc_id, 'https://example.com/nello/event')
+n.main_location.set_webook('https://example.com/nello/event')
 ```
 
 ### Upstream documentation
