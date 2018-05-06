@@ -63,6 +63,35 @@ class NelloLocation(NelloObject):
             if loc.get('location_id') == self.location_id:
                 self._json = loc
 
+    def create_time_window(self, name, ical):
+        '''
+        Create a new time window for this location
+        :param ical: String representation of an ICAL calendar event
+        '''
+        return self._nello.create_time_window(self.location_id, name, ical)
+
+    def delete_time_window(self, time_window_id):
+        '''
+        Delete a time window for this location
+        :param time_window_id: ID of the time window to delete
+        '''
+        self._nello.delete_time_window(self.location_id, time_window_id)
+
+    def set_webhook(self, url, actions=None):
+        '''
+        Update the webhook URL to be called on new events
+        :param webhook_url: URL to invoke when an action occurs
+        :param actions: List of actions for which the webhook url is to be
+        called
+        '''
+        return self._nello.set_webhook(self.location_id, url, actions)
+
+    def delete_webhook(self):
+        '''
+        Delete the current webhook for this location
+        '''
+        return self._nello.delete_webhook(self.location_id)
+
     def __str__(self):
         '''
         String representation of a NelloLocation object
