@@ -11,7 +11,7 @@ setup(
     version='1.5.1',
     license='GPL3',
     description='Python library for nello.io intercoms',
-    long_description=read('README.rst'),
+    long_description=read('README.md'),
     author='Philipp Schmitt',
     author_email='philipp@schmitt.co',
     url='https://github.com/pschmitt/pynello',
