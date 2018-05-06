@@ -100,7 +100,7 @@ class NelloApiClient(object):
             location_id)
         return self.__request('PUT', url)
 
-    def set_webook(self, location_id, webhook_url, actions=None):
+    def set_webhook(self, location_id, webhook_url, actions=None):
         '''
         Set a webhook URL that is to be called when set actions occur
         Documentation:
