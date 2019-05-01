@@ -64,6 +64,14 @@ class NelloApiClient(object):
         url = 'https://public-api.nello.io/v1/locations/'
         return self.__request('GET', url)
 
+    def list_time_windows(self, location_id):
+        ''' List time windows
+        Documentation:
+        https://nellopublicapi.docs.apiary.io/#reference/0/locations-collection/list-time-windows
+        '''
+        url = 'https://public-api.nello.io/v1/locations/{}/tw/'.format(location_id)
+        return self.__request('GET', url)
+
     def create_time_window(self, location_id, name, ical):
         '''
         Create a new time window
