@@ -63,6 +63,10 @@ class NelloLocation(NelloObject):
             if loc.get('location_id') == self.location_id:
                 self._json = loc
 
+    def list_time_windows(self):
+        ''' List time windows for this location '''
+        return self._nello.list_time_windows(self.location_id)
+
     def create_time_window(self, name, ical):
         '''
         Create a new time window for this location
